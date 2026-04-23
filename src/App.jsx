@@ -10,7 +10,7 @@ export default function App() {
     <div className="container">
       {stage === "input" && (
         <div className="card">
-          <div className="title">❤️ All the Best ❤️</div>
+          <div className="title"> All the Best </div>
 
           <input
             className="input"
@@ -54,7 +54,7 @@ export default function App() {
               }}
               disabled={noClicks === 0}
             >
-              Yes ❤️
+              Yes 😄
             </button>
 
             {/* NO */}
@@ -74,7 +74,7 @@ export default function App() {
 
       {stage === "wishes" && (
         <div className="card">
-          <div className="title">❤️ All the Best, {name}! ❤️</div>
+          <div className="title"> All the Best, {name}! </div>
 
           <div className="wishes">
             {[
@@ -83,7 +83,7 @@ export default function App() {
               "Stay calm and focused 🧠",
               "You will shine on 3rd May 2026 🌟",
               "Future doctor loading 👩‍⚕️",
-              "I believe in you ❤️",
+              "I believe in you ",
               "You got this 💯",
             ].map((msg, i) => (
               <div key={i} className="wish-card">
