@@ -1,10 +1,35 @@
 import { useStore } from "./store";
 import { useState } from "react";
+import { supabase } from "./supabaseClient";
 import "./index.css";
 
 export default function App() {
   const { name, setName, stage, goToQuestion, noClicks, clickNo, clickYes, reset } = useStore();
   const [input, setInput] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+
+  const handleContinue = async () => {
+    if (!input.trim()) return;
+
+    setSaving(true);
+    setSaveError(null);
+
+    const { error } = await supabase
+      .from("neet_wishes")
+      .insert([{ name: input.trim() }]);
+
+    setSaving(false);
+
+    if (error) {
+      setSaveError("Couldn't save your name. Please try again.");
+      console.error(error);
+      return; // don't proceed if save failed
+    }
+
+    setName(input.trim());
+    goToQuestion();
+  };
 
   return (
     <div className="container">
@@ -17,19 +42,23 @@ export default function App() {
             placeholder="Enter your name..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleContinue()}
           />
+
+          {saveError && (
+            <div style={{ color: "red", fontSize: "13px", marginTop: "8px" }}>
+              {saveError}
+            </div>
+          )}
 
           <br />
 
           <button
             className="button red"
-            onClick={() => {
-              if (!input) return;
-              setName(input);
-              goToQuestion();
-            }}
+            onClick={handleContinue}
+            disabled={saving}
           >
-            Continue
+            {saving ? "Saving..." : "Continue"}
           </button>
         </div>
       )}
@@ -41,7 +70,6 @@ export default function App() {
           </div>
 
           <div style={{ position: "relative", height: "150px" }}>
-            {/* YES */}
             <button
               onClick={clickYes}
               className={`button red ${noClicks === 0 ? "disabled" : ""}`}
@@ -57,7 +85,6 @@ export default function App() {
               Yes 😄
             </button>
 
-            {/* NO */}
             <button
               onClick={clickNo}
               className="button white"
@@ -78,7 +105,7 @@ export default function App() {
 
           <div className="wishes">
             {[
-              "You’ve worked so hard 💪",
+              "You've worked so hard 💪",
               "Believe in yourself ✨",
               "Stay calm and focused 🧠",
               "You will shine on 3rd May 2026 🌟",
